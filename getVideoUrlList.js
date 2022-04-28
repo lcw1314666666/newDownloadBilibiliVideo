@@ -58,7 +58,7 @@ function videoPages(api) {
                 res.forEach(item => {
                     videoList.push({
                         ...item,
-                        videoUrl: item.bvid
+                        videoUrl: `https://www.bilibili.com/video/${item.bvid}?p=`
                     })
                 })
                 resolve(videoList)
