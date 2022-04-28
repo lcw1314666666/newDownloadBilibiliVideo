@@ -17,7 +17,10 @@ const { getUpVideoList } = require('./getVideoUrlList')
 
 // 请求到视频列表
 getUpVideoList().then(async res => {
-    const videoInfoList = res
+    const historyDown = await getDownloadList() // 获取历史数据
+    const videoInfoList = res.filter(item => { // 过滤掉已下载的视频
+        return historyDown.findIndex(findItem => item.bvid === findItem.bvid) === -1
+    })
     // 循环下载
     for (let i = 0; i < videoInfoList.length; i++) {
         const videoItem = videoInfoList[i]
