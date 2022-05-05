@@ -1,19 +1,11 @@
 const ibili = require('ibili')
 const fs = require('fs')
+const request = require('request')
 const path = require('path')
 const { getUpVideoList } = require('./getVideoUrlList')
 
 //外站接口
 // const api = 'https://api.bilibili.com/x/space/arc/search?mid=432044872&ps=50&tid=0&pn=1';
-
-// setDownloadList().then(res => {
-//     getDownloadList().then(res => {
-//         console.log(res)
-//     })
-//
-// })
-
-
 
 // 请求到视频列表
 getUpVideoList().then(async res => {
@@ -22,7 +14,7 @@ getUpVideoList().then(async res => {
         return historyDown.findIndex(findItem => item.bvid === findItem.bvid) === -1
     })
     // 循环下载
-    for (let i = 0; i < videoInfoList.length; i++) {
+    for (let i = 0; i < 7; i++) {
         const videoItem = videoInfoList[i]
         const catalogue = videoItem.author // 目录 文件夹
         const filename = videoItem.title // 文件名称
@@ -30,8 +22,13 @@ getUpVideoList().then(async res => {
         await ibili.downloadVideo({
             folder: catalogue || 'videoFile',
             url: videoItem.videoUrl,
-            filename: filename
+            filename: filename,
+            sessdata: '04656399%2C1655352836%2C69f67*c1'
         })
+
+        // 下载图片
+        request(videoItem.pic)
+            .pipe(fs.createWriteStream(`./${videoItem.author}/${videoItem.title}.jpg`))
 
         // 文件下载完毕存入JSON文件
         const historyDown = await getDownloadList() // 获取历史数据
